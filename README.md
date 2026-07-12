@@ -19,8 +19,7 @@ ecosphere/
 `index.html` is fully self-contained (HTML/CSS/JS, no build step) and uses
 in-browser persistent storage so you can click through the entire product: 
 signup, login, environmental goals CRUD, CSR activities, governance, the
-EcoQuest Arena game, reports, and settings — end to end. It's a **UI/UX
-reference**; wire it to the real API below for production use.
+EcoQuest Arena game, reports, and settings are end to end. 
 
 ## Running the backend
 ```bash
