@@ -1,1 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ecosphere — Corporate ESG Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --forest:#1B4332;
+  --forest-deep:#0F2B20;
+  --sage:#74A57F;
+  --sage-light:#B7CFB0;
+  --tidal:#2C6E7F;
+  --tidal-light:#5C96A3;
+  --parchment:#F6F2E9;
+  --parchment-dim:#EDE7D8;
+  --gold:#C9A227;
+  --coral:#C1613E;
+  --ink:#1E2A22;
+  --ink-soft:#4B5A50;
+  --white:#FFFFFF;
+  --danger:#B3452B;
+  --ok:#3D7A4F;
+  --warn:#B8862B;
+  --radius:14px;
+  --shadow: 0 8px 24px rgba(15,43,32,0.10);
+  --surface: var(--white);
+  --bg: var(--parchment);
+  --text: var(--ink);
+  --text-soft: var(--ink-soft);
+  --border: rgba(27,67,50,0.14);
+  --sidebar-bg: linear-gradient(180deg, var(--forest), var(--forest-deep));
+}
+[data-theme="dark"]{
+  --bg:#0E1A14;
+  --surface:#152420;
+  --text:#EAF2EC;
+  --text-soft:#9FB6A8;
+  --border: rgba(183,207,176,0.14);
+  --parchment-dim:#1A2B24;
+  --shadow: 0 8px 28px rgba(0,0,0,0.45);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  font-family:'Public Sans', sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  transition:background .4s ease, color .4s ease;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+h1,h2,h3,.display{font-family:'Fraunces', serif;}
+.mono{font-family:'JetBrains Mono', monospace;}
+button{font-family:inherit; cursor:pointer;}
+::selection{background:var(--sage); color:var(--forest-deep);}
+::-webkit-scrollbar{width:10px; height:10px;}
+::-webkit-scrollbar-thumb{background:var(--sage); border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+
+a{color:inherit;}
+.hidden{display:none !important;}
+
+/* ============ WELCOME SCREEN ============ */
+#welcome{
+  position:relative;
+  min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(116,165,127,0.35), transparent 45%),
+    radial-gradient(circle at 85% 75%, rgba(44,110,127,0.35), transparent 50%),
+    linear-gradient(160deg, var(--forest) 0%, var(--forest-deep) 55%, #0A1F17 100%);
+  overflow:hidden;
+}
+#welcome canvas{position:absolute; inset:0; width:100%; height:100%;}
+.orbit-svg{position:absolute; inset:0; width:100%; height:100%; opacity:.5; pointer-events:none;}
+.orbit-ring{fill:none; stroke:rgba(201,162,39,0.25); stroke-width:1;}
+.leaf{position:absolute; opacity:.16; animation:drift 22s linear infinite;}
+@keyframes drift{
+  0%{transform:translateY(110vh) rotate(0deg);}
+  100%{transform:translateY(-15vh) rotate(360deg);}
+}
+.welcome-card{
+  position:relative; z-index:5;
+  text-align:center;
+  color:var(--parchment);
+  padding:60px 48px;
+  max-width:620px;
+}
+.welcome-badge{
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(246,242,233,0.10);
+  border:1px solid rgba(246,242,233,0.25);
+  padding:6px 16px; border-radius:999px;
+  font-size:12.5px; letter-spacing:.14em; text-transform:uppercase;
+  margin-bottom:28px; backdrop-filter:blur(6px);
+}
+.welcome-card h1{
+  font-size:clamp(38px,6vw,64px);
+  font-weight:600; line-height:1.05;
+  background:linear-gradient(100deg,#F6F2E9 20%, #C9A227 55%, #B7CFB0 85%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  margin-bottom:18px;
+}
+.welcome-card p{
+  font-size:17px; color:var(--sage-light); line-height:1.65; margin-bottom:38px;
+  font-weight:400;
+}
+.welcome-actions{display:flex; gap:16px; justify-content:center; flex-wrap:wrap;}
+.btn{
+  border:none; border-radius:10px; padding:14px 30px; font-size:15px; font-weight:700;
+  transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+  letter-spacing:.01em;
+}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:var(--gold); color:#22240F; box-shadow:0 10px 24px rgba(201,162,39,0.35);}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 14px 30px rgba(201,162,39,0.45);}
+.btn-ghost{background:rgba(246,242,233,0.08); color:var(--parchment); border:1px solid rgba(246,242,233,0.3);}
+.btn-ghost:hover{background:rgba(246,242,233,0.16); transform:translateY(-2px);}
+.welcome-stats{display:flex; gap:34px; justify-content:center; margin-top:46px; flex-wrap:wrap;}
+.welcome-stats div{text-align:center;}
+.welcome-stats .num{font-family:'Fraunces',serif; font-size:26px; color:var(--gold); font-weight:600;}
+.welcome-stats .lbl{font-size:11px; color:var(--sage-light); text-transform:uppercase; letter-spacing:.12em; margin-top:4px;}
+
+/* ============ AUTH ============ */
+#auth{
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(116,165,127,0.16), transparent 40%),
+    radial-gradient(circle at 90% 90%, rgba(44,110,127,0.16), transparent 40%),
+    var(--bg);
+  padding:32px;
+}
+.auth-box{
+  background:var(--surface); border-radius:20px; box-shadow:var(--shadow);
+  width:100%; max-width:460px; padding:42px 40px; border:1px solid var(--border);
+}
+.auth-box h2{font-size:28px; margin-bottom:6px;}
+.auth-sub{color:var(--text-soft); font-size:14px; margin-bottom:26px;}
+.tabs{display:flex; background:var(--parchment-dim); border-radius:10px; padding:4px; margin-bottom:26px;}
+.tab-btn{flex:1; text-align:center; padding:10px; border:none; background:transparent; border-radius:8px; font-weight:700; font-size:14px; color:var(--text-soft);}
+.tab-btn.active{background:var(--forest); color:var(--parchment);}
+.field{margin-bottom:16px;}
+.field label{display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:var(--text-soft);}
+.field input, .field select{
+  width:100%; padding:12px 14px; border-radius:9px; border:1.5px solid var(--border);
+  background:var(--bg); color:var(--text); font-size:14.5px; transition:border .15s;
+}
+.field input:focus, .field select:focus{outline:none; border-color:var(--tidal);}
+.field.error input, .field.error select{border-color:var(--danger);}
+.err-msg{color:var(--danger); font-size:12.5px; margin-top:5px; display:none; font-weight:600;}
+.field.error .err-msg{display:block;}
+.field-row{display:flex; gap:12px;}
+.field-row .field{flex:1;}
+.pw-strength{height:4px; border-radius:2px; background:var(--border); margin-top:8px; overflow:hidden;}
+.pw-strength i{display:block; height:100%; width:0%; background:var(--danger); transition:width .3s, background .3s;}
+.form-alert{
+  background:rgba(179,69,43,0.1); border:1px solid rgba(179,69,43,0.3); color:var(--danger);
+  padding:10px 14px; border-radius:8px; font-size:13px; margin-bottom:16px; display:none; font-weight:600;
+}
+.form-alert.show{display:block;}
+.form-alert.success{background:rgba(61,122,79,0.1); border-color:rgba(61,122,79,0.3); color:var(--ok);}
+.btn-block{width:100%; padding:13px;}
+.auth-foot{text-align:center; margin-top:18px; font-size:13.5px; color:var(--text-soft);}
+.auth-foot b{color:var(--tidal); cursor:pointer;}
+
+/* ============ APP SHELL ============ */
+#app-shell{display:none; min-height:100vh;}
+#app-shell.active{display:block;}
+.topbar{
+  position:sticky; top:0; z-index:40;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 26px; background:var(--surface); border-bottom:1px solid var(--border);
+  backdrop-filter:blur(10px);
+}
+.topbar-left{display:flex; align-items:center; gap:14px;}
+.brand{display:flex; align-items:center; gap:10px; font-family:'Fraunces',serif; font-weight:600; font-size:20px;}
+.brand .dot{width:10px; height:10px; border-radius:50%; background:var(--sage); box-shadow:0 0 0 4px rgba(116,165,127,0.25);}
+.crumb{color:var(--text-soft); font-size:13px;}
+.topbar-right{display:flex; align-items:center; gap:12px;}
+.icon-btn{
+  width:40px; height:40px; border-radius:10px; border:1px solid var(--border); background:var(--bg);
+  display:flex; align-items:center; justify-content:center; font-size:17px; position:relative;
+}
+.icon-btn:hover{background:var(--parchment-dim);}
+.notif-dot{position:absolute; top:6px; right:7px; width:7px; height:7px; border-radius:50%; background:var(--coral);}
+.avatar{
+  width:38px; height:38px; border-radius:50%; background:var(--forest); color:var(--parchment);
+  display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; overflow:hidden;
+  border:2px solid var(--gold); cursor:pointer;
+}
+.avatar img{width:100%; height:100%; object-fit:cover;}
+.hamburger{
+  width:42px; height:42px; border-radius:10px; border:1px solid var(--border); background:var(--forest);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+}
+.hamburger span{width:19px; height:2px; background:var(--parchment); border-radius:2px;}
+
+/* Side menu */
+#menu-overlay{
+  position:fixed; inset:0; background:rgba(15,27,20,0.55); z-index:60; display:none; backdrop-filter:blur(2px);
+}
+#menu-overlay.show{display:block;}
+#side-menu{
+  position:fixed; top:0; right:-380px; width:360px; max-width:88vw; height:100vh; z-index:61;
+  background:var(--sidebar-bg); color:var(--parchment); overflow-y:auto; transition:right .3s ease;
+  padding:26px 20px 40px;
+}
+#side-menu.show{right:0;}
+.menu-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:22px;}
+.menu-head h3{font-family:'Fraunces',serif; font-size:20px;}
+.menu-close{background:rgba(255,255,255,0.1); border:none; color:var(--parchment); width:32px; height:32px; border-radius:8px; font-size:16px;}
+.menu-group{margin-bottom:6px;}
+.menu-parent{
+  display:flex; align-items:center; justify-content:space-between; padding:13px 12px; border-radius:10px;
+  font-weight:700; font-size:15px; background:rgba(255,255,255,0.03);
+}
+.menu-parent:hover{background:rgba(255,255,255,0.08);}
+.menu-parent .arrow{transition:transform .2s;}
+.menu-parent.open .arrow{transform:rotate(90deg);}
+.menu-children{max-height:0; overflow:hidden; transition:max-height .25s ease;}
+.menu-children.open{max-height:400px;}
+.menu-child{
+  padding:10px 14px 10px 30px; font-size:13.5px; color:var(--sage-light); border-radius:8px; cursor:pointer;
+}
+.menu-child:hover, .menu-child.active{background:rgba(201,162,39,0.18); color:var(--parchment);}
+
+/* Content */
+.content{padding:26px; max-width:1400px; margin:0 auto;}
+.page-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:22px; flex-wrap:wrap; gap:14px;}
+.page-head h1{font-size:26px;}
+.page-head p{color:var(--text-soft); font-size:14px; margin-top:4px;}
+.card{background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); box-shadow:var(--shadow); padding:22px;}
+.grid{display:grid; gap:18px;}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+@media(max-width:1000px){.grid-4{grid-template-columns:repeat(2,1fr);} .grid-3{grid-template-columns:repeat(2,1fr);} .grid-2{grid-template-columns:1fr;}}
+@media(max-width:640px){.grid-4,.grid-3{grid-template-columns:1fr;}}
+
+.stat-card{padding:20px; display:flex; flex-direction:column; gap:8px;}
+.stat-card .top{display:flex; justify-content:space-between; align-items:center;}
+.stat-card .icon{font-size:22px;}
+.stat-card .val{font-family:'Fraunces',serif; font-size:28px; font-weight:600;}
+.stat-card .lbl{font-size:12.5px; color:var(--text-soft); text-transform:uppercase; letter-spacing:.08em;}
+.trend{font-size:12px; font-weight:700; padding:2px 8px; border-radius:20px;}
+.trend.up{background:rgba(61,122,79,0.15); color:var(--ok);}
+.trend.down{background:rgba(179,69,43,0.15); color:var(--danger);}
+
+.tag{display:inline-block; padding:4px 11px; border-radius:20px; font-size:11.5px; font-weight:700; letter-spacing:.02em;}
+.tag.active{background:rgba(61,122,79,0.15); color:var(--ok);}
+.tag.ontrack{background:rgba(201,162,39,0.18); color:var(--warn);}
+.tag.completed{background:rgba(44,110,127,0.15); color:var(--tidal);}
+.tag.pending{background:rgba(184,134,43,0.15); color:var(--warn);}
+.tag.approved{background:rgba(61,122,79,0.15); color:var(--ok);}
+.tag.open{background:rgba(179,69,43,0.15); color:var(--danger);}
+.tag.resolved{background:rgba(61,122,79,0.15); color:var(--ok);}
+.tag.high{background:rgba(179,69,43,0.18); color:var(--danger);}
+.tag.medium{background:rgba(184,134,43,0.18); color:var(--warn);}
+.tag.low{background:rgba(61,122,79,0.15); color:var(--ok);}
+
+table{width:100%; border-collapse:collapse; font-size:13.8px;}
+th{text-align:left; padding:11px 12px; color:var(--text-soft); font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; border-bottom:2px solid var(--border);}
+td{padding:13px 12px; border-bottom:1px solid var(--border); vertical-align:middle;}
+tr:hover td{background:var(--parchment-dim);}
+.table-wrap{overflow-x:auto;}
+.progress-bar{width:100%; height:9px; background:var(--parchment-dim); border-radius:6px; overflow:hidden;}
+.progress-bar i{display:block; height:100%; background:linear-gradient(90deg, var(--sage), var(--tidal)); border-radius:6px;}
+.row-actions{display:flex; gap:8px;}
+.mini-btn{width:30px; height:30px; border-radius:8px; border:1px solid var(--border); background:var(--bg); font-size:13px;}
+.mini-btn:hover{background:var(--parchment-dim);}
+.mini-btn.danger:hover{background:rgba(179,69,43,0.12); border-color:var(--danger);}
+
+.section-title{font-size:19px; margin-bottom:14px; display:flex; align-items:center; gap:8px;}
+.btn-sm{padding:9px 16px; font-size:13px; border-radius:8px; font-weight:700;}
+.btn-forest{background:var(--forest); color:var(--parchment);}
+.btn-forest:hover{background:var(--forest-deep);}
+.btn-outline{background:transparent; border:1.5px solid var(--forest); color:var(--forest);}
+[data-theme="dark"] .btn-outline{border-color:var(--sage-light); color:var(--sage-light);}
+.toolbar{display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;}
+.search-input{padding:10px 14px; border-radius:9px; border:1.5px solid var(--border); background:var(--bg); color:var(--text); font-size:13.5px; min-width:220px;}
+
+/* Modal */
+.modal-overlay{position:fixed; inset:0; background:rgba(15,27,20,0.55); z-index:80; display:none; align-items:center; justify-content:center; padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface); border-radius:16px; width:100%; max-width:520px; padding:28px; box-shadow:var(--shadow); max-height:88vh; overflow-y:auto;}
+.modal h3{font-size:20px; margin-bottom:18px;}
+.modal-close-x{float:right; background:none; border:none; font-size:18px; color:var(--text-soft);}
+
+/* Toast */
+#toast-wrap{position:fixed; bottom:22px; right:22px; z-index:100; display:flex; flex-direction:column; gap:10px;}
+.toast{background:var(--forest); color:var(--parchment); padding:13px 20px; border-radius:10px; font-size:13.5px; font-weight:600; box-shadow:var(--shadow); animation:toastIn .25s ease; display:flex; align-items:center; gap:8px;}
+.toast.danger{background:var(--danger);}
+.toast.gold{background:var(--gold); color:#22240F;}
+@keyframes toastIn{from{transform:translateX(40px); opacity:0;} to{transform:translateX(0); opacity:1;}}
+
+/* Empty state */
+.empty{text-align:center; padding:44px 20px; color:var(--text-soft);}
+.empty .e-icon{font-size:38px; margin-bottom:10px;}
+
+/* ===== GAME (EcoQuest Arena) ===== */
+.arena-hero{
+  border-radius:20px; padding:34px; margin-bottom:22px; position:relative; overflow:hidden;
+  background:linear-gradient(120deg, var(--forest) 0%, var(--tidal) 100%); color:var(--parchment);
+}
+.arena-hero h1{font-size:30px; margin-bottom:6px;}
+.arena-hero p{color:var(--sage-light); max-width:520px; font-size:14px;}
+.confetti-dot{position:absolute; border-radius:50%; opacity:.7; animation:pop 2.6s ease-in-out infinite;}
+@keyframes pop{0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-14px) scale(1.15);}}
+.challenge-card{border-radius:14px; border:1px solid var(--border); padding:18px; background:var(--surface); position:relative; overflow:hidden;}
+.challenge-card .badge-pts{position:absolute; top:14px; right:14px; background:var(--gold); color:#22240F; font-weight:800; font-size:12px; padding:4px 10px; border-radius:20px;}
+.badge-icon{font-size:30px;}
+.badge-tile{text-align:center; padding:18px 10px; border-radius:14px; border:1px solid var(--border); background:var(--surface);}
+.badge-tile.locked{opacity:.35; filter:grayscale(1);}
+.badge-tile .name{font-size:12px; font-weight:700; margin-top:8px;}
+.lb-row{display:flex; align-items:center; gap:12px; padding:12px 8px; border-bottom:1px solid var(--border);}
+.lb-rank{width:30px; text-align:center; font-family:'Fraunces',serif; font-weight:700; font-size:16px;}
+.lb-rank.r1{color:var(--gold);} .lb-rank.r2{color:#9FA6AD;} .lb-rank.r3{color:#B08D57;}
+.lb-avatar{width:34px; height:34px; border-radius:50%; background:var(--sage); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; color:var(--forest-deep);}
+.lb-name{flex:1; font-weight:600; font-size:13.8px;}
+.lb-pts{font-weight:800; color:var(--tidal); font-size:13.8px;}
+
+/* dark mode toggle floating */
+.theme-toggle{
+  display:flex; align-items:center; gap:6px; background:var(--bg); border:1px solid var(--border);
+  border-radius:20px; padding:5px; cursor:pointer;
+}
+.theme-toggle .t-opt{padding:6px 10px; border-radius:16px; font-size:14px;}
+.theme-toggle .t-opt.active{background:var(--forest); color:var(--parchment);}
+
+/* Profile modal upload */
+.pic-upload{width:96px; height:96px; border-radius:50%; margin:0 auto 14px; background:var(--parchment-dim); display:flex; align-items:center; justify-content:center; overflow:hidden; border:3px solid var(--gold); position:relative; cursor:pointer;}
+.pic-upload img{width:100%; height:100%; object-fit:cover;}
+.pic-upload .plus{font-size:26px; color:var(--text-soft);}
+
+/* chart bars (pure css) */
+.bar-chart{display:flex; align-items:flex-end; gap:10px; height:180px; padding-top:10px;}
+.bar-chart .bar{flex:1; background:linear-gradient(180deg,var(--sage),var(--tidal)); border-radius:6px 6px 0 0; position:relative; min-height:4px;}
+.bar-chart .bar span{position:absolute; top:-20px; left:0; right:0; text-align:center; font-size:11px; font-weight:700; color:var(--text-soft);}
+.bar-chart .lbls{display:flex; gap:10px; margin-top:8px;}
+.bar-chart .lbls div{flex:1; text-align:center; font-size:11px; color:var(--text-soft);}
+.donut-wrap{display:flex; align-items:center; gap:20px;}
+.legend-dot{width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:8px;}
+
+footer.appfoot{text-align:center; padding:30px; color:var(--text-soft); font-size:12px;}
+</style>
+</head>
+<body>
+
+<!-- ================= WELCOME SCREEN ================= -->
+<div id="welcome">
+  <canvas id="particleCanvas"></canvas>
+  <svg class="orbit-svg" viewBox="0 0 800 800"><circle class="orbit-ring" cx="400" cy="400" r="200"/><circle class="orbit-ring" cx="400" cy="400" r="310"/><circle class="orbit-ring" cx="400" cy="400" r="120"/></svg>
+  <div class="welcome-card">
+    <div class="welcome-badge">🌍 Corporate ESG Intelligence Platform</div>
+    <h1 class="display">Welcome to Ecosphere</h1>
+    <p>Track environmental targets, empower social impact, strengthen governance, and gamify sustainability — all in one living dashboard for your organization.</p>
+    <div class="welcome-actions">
+      <button class="btn btn-primary" onclick="goToAuth('signup')">Create Account</button>
+      <button class="btn btn-ghost" onclick="goToAuth('login')">Log In</button>
+    </div>
+    <div class="welcome-stats">
+      <div><div class="num">42%</div><div class="lbl">Avg. Emission Cut</div></div>
+      <div><div class="num">1,280</div><div class="lbl">Employees Engaged</div></div>
+      <div><div class="num">96</div><div class="lbl">Active Challenges</div></div>
+      <div><div class="num">A+</div><div class="lbl">Governance Rating</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= AUTH ================= -->
+<div id="auth" class="hidden">
+  <div class="auth-box">
+    <div class="tabs">
+      <button class="tab-btn" id="tab-login" onclick="switchAuthTab('login')">Log In</button>
+      <button class="tab-btn" id="tab-signup" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form id="loginForm" onsubmit="return handleLogin(event)">
+      <h2 class="display">Welcome back</h2>
+      <p class="auth-sub">Log in with your work email to continue.</p>
+      <div class="form-alert" id="loginAlert"></div>
+      <div class="field" id="f-login-email">
+        <label>Work Email</label>
+        <input type="email" id="loginEmail" placeholder="you@company.com" autocomplete="username">
+        <div class="err-msg">Enter a valid email address.</div>
+      </div>
+      <div class="field" id="f-login-pass">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+        <div class="err-msg">Password is required.</div>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Log In</button>
+      <p class="auth-foot">New here? <b onclick="switchAuthTab('signup')">Create an account</b></p>
+      <p class="auth-foot mono" style="font-size:11px; opacity:.6;">Demo tip: sign up first — accounts are stored securely for this session.</p>
+    </form>
+
+    <!-- SIGNUP FORM -->
+    <form id="signupForm" class="hidden" onsubmit="return handleSignup(event)">
+      <h2 class="display">Join Ecosphere</h2>
+      <p class="auth-sub">Create your employee account.</p>
+      <div class="form-alert" id="signupAlert"></div>
+
+      <div class="field" id="f-name">
+        <label>Full Name</label>
+        <input type="text" id="suName" placeholder="Jordan Rivera">
+        <div class="err-msg">Full name must be at least 3 characters.</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field" id="f-empid">
+          <label>Employee ID</label>
+          <input type="text" id="suEmpId" placeholder="EMP-0042">
+          <div class="err-msg">Employee ID is required (min 3 chars).</div>
+        </div>
+        <div class="field" id="f-dept">
+          <label>Department</label>
+          <select id="suDept">
+            <option value="">Select department</option>
+            <option>Human Resources</option>
+            <option>IT</option>
+            <option>Finance</option>
+            <option>Operations</option>
+            <option>Management</option>
+            <option>Marketing</option>
+          </select>
+          <div class="err-msg">Please select a department.</div>
+        </div>
+      </div>
+
+      <div class="field" id="f-email">
+        <label>Work Email</label>
+        <input type="email" id="suEmail" placeholder="you@company.com">
+        <div class="err-msg">Enter a valid email address.</div>
+      </div>
+
+      <div class="field" id="f-pass">
+        <label>Password</label>
+        <input type="password" id="suPassword" placeholder="Min. 8 characters, 1 number, 1 symbol" oninput="checkPwStrength()">
+        <div class="pw-strength"><i id="pwBar"></i></div>
+        <div class="err-msg">Password must be 8+ chars with a number and a symbol.</div>
+      </div>
+
+      <div class="field" id="f-pass2">
+        <label>Confirm Password</label>
+        <input type="password" id="suPassword2" placeholder="Repeat password">
+        <div class="err-msg">Passwords do not match.</div>
+      </div>
+
+      <button class="btn btn-primary btn-block" type="submit">Create Account</button>
+      <p class="auth-foot">Already registered? <b onclick="switchAuthTab('login')">Log in</b></p>
+    </form>
+
+    <p style="text-align:center; margin-top:16px;"><a href="#" onclick="goToWelcome(); return false;" style="font-size:12.5px; color:var(--text-soft);">← Back to welcome</a></p>
+  </div>
+</div>
+
+<!-- ================= APP SHELL ================= -->
+<div id="app-shell">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="brand"><span class="dot"></span> Ecosphere</div>
+      <span class="crumb" id="crumbText">/ Dashboard</span>
+    </div>
+    <div class="topbar-right">
+      <div class="theme-toggle" onclick="toggleTheme()">
+        <span class="t-opt" id="toptLight">☀️</span>
+        <span class="t-opt" id="toptDark">🌙</span>
+      </div>
+      <button class="icon-btn" onclick="openNotifs()">🔔<span class="notif-dot" id="notifDot"></span></button>
+      <div class="avatar" id="topAvatar" onclick="openProfile()">JR</div>
+      <button class="hamburger" onclick="openMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+
+  <div class="content" id="content"></div>
+
+  <footer class="appfoot">Ecosphere ESG Platform · Data encrypted in transit &amp; at rest · v1.0</footer>
+</div>
+
+<!-- Side Menu -->
+<div id="menu-overlay" onclick="closeMenu()"></div>
+<div id="side-menu">
+  <div class="menu-head">
+    <h3>Menu</h3>
+    <button class="menu-close" onclick="closeMenu()">✕</button>
+  </div>
+  <div id="menuList"></div>
+</div>
+
+<!-- Generic Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<div id="toast-wrap"></div>
+
+<script>
+/* ================= UTIL / STATE ================= */
+const DEPTS = ["Human Resources","IT","Finance","Operations","Management","Marketing"];
+let STATE = { user:null, theme:'light', currentView:'env-goals' };
+let seeded = false;
+
+function uid(p){ return p+'_'+Math.random().toString(36).slice(2,9); }
+function fmtDate(d){ return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+
+function toast(msg, type='', icon='✓'){
+  const wrap = document.getElementById('toast-wrap');
+  const t = document.createElement('div');
+  t.className = 'toast '+type;
+  t.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  wrap.appendChild(t);
+  setTimeout(()=>{ t.style.transition='opacity .3s'; t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 3000);
+}
+
+/* ---- storage helpers (shared org-wide data, personal session local) ---- */
+async function sGet(key, fallback){
+  try{
+    const r = await window.storage.get(key, true);
+    return r ? JSON.parse(r.value) : fallback;
+  }catch(e){ return fallback; }
+}
+async function sSet(key, val){
+  try{ await window.storage.set(key, JSON.stringify(val), true); }catch(e){ console.error(e); }
+}
+
+/* ================= WELCOME PARTICLES ================= */
+function initParticles(){
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+  resize(); addEventListener('resize', resize);
+  const N = 55;
+  const pts = Array.from({length:N}, ()=>({
+    x:Math.random()*canvas.width, y:Math.random()*canvas.height,
+    r:Math.random()*2+0.6, vx:(Math.random()-0.5)*0.25, vy:(Math.random()-0.5)*0.25 - 0.12,
+    hue: Math.random()>0.5 ? '116,165,127' : '44,110,127'
+  }));
+  function tick(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.y<-10) p.y = canvas.height+10;
+      if(p.x<-10) p.x = canvas.width+10;
+      if(p.x>canvas.width+10) p.x = -10;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = `rgba(${p.hue},0.55)`;
+      ctx.fill();
+    });
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+        const d = Math.sqrt(dx*dx+dy*dy);
+        if(d<110){
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.strokeStyle = `rgba(201,162,39,${0.08*(1-d/110)})`;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  tick();
+  // floating leaves
+  const wc = document.getElementById('welcome');
+  const emojis = ['🍃','🌿','💧','☀️'];
+  for(let i=0;i<14;i++){
+    const l = document.createElement('div');
+    l.className='leaf'; l.textContent = emojis[i%emojis.length];
+    l.style.left = Math.random()*100+'%';
+    l.style.fontSize = (14+Math.random()*20)+'px';
+    l.style.animationDuration = (16+Math.random()*14)+'s';
+    l.style.animationDelay = (-Math.random()*20)+'s';
+    wc.appendChild(l);
+  }
+}
+
+function goToAuth(tab){
+  document.getElementById('welcome').classList.add('hidden');
+  document.getElementById('auth').classList.remove('hidden');
+  switchAuthTab(tab);
+}
+function goToWelcome(){
+  document.getElementById('auth').classList.add('hidden');
+  document.getElementById('welcome').classList.remove('hidden');
+}
+function switchAuthTab(tab){
+  document.getElementById('tab-login').classList.toggle('active', tab==='login');
+  document.getElementById('tab-signup').classList.toggle('active', tab==='signup');
+  document.getElementById('loginForm').classList.toggle('hidden', tab!=='login');
+  document.getElementById('signupForm').classList.toggle('hidden', tab!=='signup');
+}
+
+/* ================= VALIDATION ================= */
+function setFieldError(id, isError){
+  document.getElementById(id).classList.toggle('error', isError);
+}
+function showAlert(id, msg, ok=false){
+  const el = document.getElementById(id);
+  el.textContent = msg; el.classList.add('show');
+  el.classList.toggle('success', ok);
+}
+function clearAlert(id){ document.getElementById(id).classList.remove('show'); }
+
+function checkPwStrength(){
+  const v = document.getElementById('suPassword').value;
+  let score = 0;
+  if(v.length>=8) score+=25;
+  if(/[0-9]/.test(v)) score+=25;
+  if(/[^A-Za-z0-9]/.test(v)) score+=25;
+  if(/[A-Z]/.test(v) && /[a-z]/.test(v)) score+=25;
+  const bar = document.getElementById('pwBar');
+  bar.style.width = score+'%';
+  bar.style.background = score<50 ? 'var(--danger)' : score<100 ? 'var(--warn)' : 'var(--ok)';
+}
+
+async function handleSignup(e){
+  e.preventDefault();
+  clearAlert('signupAlert');
+  let valid = true;
+  const name = document.getElementById('suName').value.trim();
+  const empId = document.getElementById('suEmpId').value.trim();
+  const dept = document.getElementById('suDept').value;
+  const email = document.getElementById('suEmail').value.trim();
+  const pass = document.getElementById('suPassword').value;
+  const pass2 = document.getElementById('suPassword2').value;
+
+  const nameOk = name.length>=3;
+  setFieldError('f-name', !nameOk); if(!nameOk) valid=false;
+
+  const empOk = empId.length>=3;
+  setFieldError('f-empid', !empOk); if(!empOk) valid=false;
+
+  const deptOk = !!dept;
+  setFieldError('f-dept', !deptOk); if(!deptOk) valid=false;
+
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  setFieldError('f-email', !emailOk); if(!emailOk) valid=false;
+
+  const passOk = pass.length>=8 && /[0-9]/.test(pass) && /[^A-Za-z0-9]/.test(pass);
+  setFieldError('f-pass', !passOk); if(!passOk) valid=false;
+
+  const matchOk = pass===pass2 && pass2.length>0;
+  setFieldError('f-pass2', !matchOk); if(!matchOk) valid=false;
+
+  if(!valid){ showAlert('signupAlert','Please fix the highlighted fields before continuing.'); return false; }
+
+  const users = await sGet('users', {});
+  if(users[email.toLowerCase()]){
+    showAlert('signupAlert','An account with this email already exists.');
+    setFieldError('f-email', true);
+    return false;
+  }
+  const empExists = Object.values(users).some(u=>u.empId.toLowerCase()===empId.toLowerCase());
+  if(empExists){
+    showAlert('signupAlert','This Employee ID is already registered.');
+    setFieldError('f-empid', true);
+    return false;
+  }
+
+  const newUser = {
+    id: uid('usr'), name, empId, dept, email: email.toLowerCase(),
+    passHash: btoa(pass+':salted'), // demo-only hashing placeholder; real hashing occurs server-side (bcrypt)
+    role: dept==='Human Resources' ? 'HR' : 'Employee',
+    points:0, badges:[], joined:new Date().toISOString(), pic:null
+  };
+  users[email.toLowerCase()] = newUser;
+  await sSet('users', users);
+  showAlert('signupAlert','Account created! Logging you in…', true);
+  toast('Welcome to Ecosphere, '+name.split(' ')[0]+'!','gold','🎉');
+  setTimeout(()=> loginAs(newUser), 700);
+  return false;
+}
+
+async function handleLogin(e){
+  e.preventDefault();
+  clearAlert('loginAlert');
+  let valid = true;
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPassword').value;
+
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  setFieldError('f-login-email', !emailOk); if(!emailOk) valid=false;
+  const passOk = pass.length>0;
+  setFieldError('f-login-pass', !passOk); if(!passOk) valid=false;
+  if(!valid){ showAlert('loginAlert','Please enter a valid email and password.'); return false; }
+
+  const users = await sGet('users', {});
+  const u = users[email.toLowerCase()];
+  if(!u){ showAlert('loginAlert','No account found with that email.'); setFieldError('f-login-email',true); return false; }
+  if(u.passHash !== btoa(pass+':salted')){
+    showAlert('loginAlert','Incorrect password. Please try again.');
+    setFieldError('f-login-pass', true);
+    return false;
+  }
+  loginAs(u);
+  return false;
+}
+
+function loginAs(u){
+  STATE.user = u;
+  document.getElementById('auth').classList.add('hidden');
+  document.getElementById('app-shell').classList.add('active');
+  document.getElementById('topAvatar').textContent = initials(u.name);
+  if(u.pic){ document.getElementById('topAvatar').innerHTML = `<img src="${u.pic}">`; }
+  buildMenu();
+  navigate('dash-overview');
+  ensureSeed();
+}
+function initials(n){ return n.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase(); }
+
+function logout(){
+  STATE.user = null;
+  document.getElementById('app-shell').classList.remove('active');
+  document.getElementById('welcome').classList.remove('hidden');
+  document.getElementById('auth').classList.add('hidden');
+  document.getElementById('loginForm').reset(); document.getElementById('signupForm').reset();
+  toast('Logged out securely.');
+}
+
+/* ================= THEME ================= */
+function toggleTheme(mode){
+  STATE.theme = mode || (STATE.theme==='light'?'dark':'light');
+  document.documentElement.setAttribute('data-theme', STATE.theme);
+  document.getElementById('toptLight').classList.toggle('active', STATE.theme==='light');
+  document.getElementById('toptDark').classList.toggle('active', STATE.theme==='dark');
+}
+toggleTheme('light');
+
+/* ================= MENU ================= */
+const MENU = [
+  {key:'dash', label:'📊 Dashboard', children:[
+    {key:'dash-overview', label:'Overview'},
+    {key:'dash-products', label:'Product ESG Profiles'},
+    {key:'dash-carbon', label:'Carbon Transactions'},
+    {key:'dash-goals', label:'Environmental Goals'},
+  ]},
+  {key:'social', label:'🤝 Social', children:[
+    {key:'social-csr', label:'CSR Activities'},
+    {key:'social-participation', label:'Employee Participation'},
+    {key:'social-diversity', label:'Diversity'},
+  ]},
+  {key:'gov', label:'⚖️ Governance', children:[
+    {key:'gov-policies', label:'Policies'},
+    {key:'gov-ack', label:'Policy Acknowledgement'},
+    {key:'gov-audits', label:'Audits'},
+    {key:'gov-issues', label:'Compliance Issues'},
+  ]},
+  {key:'game', label:'🏆 EcoQuest Arena', children:[
+    {key:'game-challenges', label:'Challenges'},
+    {key:'game-myquest', label:'Challenge Participation'},
+    {key:'game-badges', label:'Badges'},
+    {key:'game-rewards', label:'Rewards'},
+    {key:'game-leaderboard', label:'Leaderboard'},
+  ]},
+  {key:'reports', label:'📈 Reports', children:[
+    {key:'rep-env', label:'Environmental Report'},
+    {key:'rep-social', label:'Social Report'},
+    {key:'rep-gov', label:'Governance Report'},
+    {key:'rep-summary', label:'ESG Summary'},
+    {key:'rep-custom', label:'Custom Report Builder'},
+  ]},
+  {key:'settings', label:'⚙️ Settings', children:[
+    {key:'set-depts', label:'Departments'},
+    {key:'set-categories', label:'Categories'},
+    {key:'set-notifs', label:'Notification Settings'},
+  ]},
+];
+
+function buildMenu(){
+  const list = document.getElementById('menuList');
+  list.innerHTML = MENU.map(g=>`
+    <div class="menu-group">
+      <div class="menu-parent" onclick="toggleGroup('${g.key}')" id="grp-${g.key}">
+        <span>${g.label}</span><span class="arrow">›</span>
+      </div>
+      <div class="menu-children" id="ch-${g.key}">
+        ${g.children.map(c=>`<div class="menu-child" id="mc-${c.key}" onclick="navigate('${c.key}')">${c.label}</div>`).join('')}
+      </div>
+    </div>`).join('') +
+    `<div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.12);">
+      <div class="menu-child" onclick="openProfile()">👤 My Profile</div>
+      <div class="menu-child" onclick="logout()">🚪 Log Out</div>
+    </div>`;
+}
+function toggleGroup(key){
+  document.getElementById('grp-'+key).classList.toggle('open');
+  document.getElementById('ch-'+key).classList.toggle('open');
+}
+function openMenu(){ document.getElementById('menu-overlay').classList.add('show'); document.getElementById('side-menu').classList.add('show'); }
+function closeMenu(){ document.getElementById('menu-overlay').classList.remove('show'); document.getElementById('side-menu').classList.remove('show'); }
+
+const LABELS = {};
+MENU.forEach(g=>g.children.forEach(c=>LABELS[c.key]=g.label.replace(/^\S+\s/,'')+' / '+c.label));
+
+function navigate(key){
+  STATE.currentView = key;
+  document.querySelectorAll('.menu-child').forEach(e=>e.classList.remove('active'));
+  const mc = document.getElementById('mc-'+key); if(mc) mc.classList.add('active');
+  closeMenu();
+  document.getElementById('crumbText').textContent = '/ '+ (LABELS[key]||'Dashboard');
+  render(key);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ================= SEED DATA ================= */
+async function ensureSeed(){
+  let goals = await sGet('goals', null);
+  if(!goals){
+    goals = [
+      {id:uid('g'), name:'Reduce Fleet Emissions', dept:'Operations', target:120, current:78, deadline:'2026-12-31', status:'On Track'},
+      {id:uid('g'), name:'Switch to Renewable Energy', dept:'IT', target:500, current:500, deadline:'2026-03-01', status:'Completed'},
+      {id:uid('g'), name:'Reduce Paper Consumption', dept:'Human Resources', target:60, current:22, deadline:'2026-09-15', status:'Active'},
+      {id:uid('g'), name:'Water Usage Optimization', dept:'Operations', target:200, current:140, deadline:'2026-11-01', status:'On Track'},
+      {id:uid('g'), name:'Green Data Center Migration', dept:'IT', target:300, current:90, deadline:'2027-02-28', status:'Active'},
+    ];
+    await sSet('goals', goals);
+  }
+  let csr = await sGet('csr', null);
+  if(!csr){
+    csr = [
+      {id:uid('c'), name:'Beach Cleanup Drive', dept:'Operations', date:'2026-08-14', joined:['Aarav Shah','Priya Nair']},
+      {id:uid('c'), name:'Tree Plantation Marathon', dept:'Human Resources', date:'2026-08-22', joined:['Rohan Mehta']},
+      {id:uid('c'), name:'Blood Donation Camp', dept:'Management', date:'2026-09-05', joined:[]},
+    ];
+    await sSet('csr', csr);
+  }
+  let partic = await sGet('participation', null);
+  if(!partic){
+    partic = [
+      {id:uid('p'), employee:'Aarav Shah', activity:'Beach Cleanup Drive', photo:'📷', points:50, status:'Approved'},
+      {id:uid('p'), employee:'Priya Nair', activity:'Beach Cleanup Drive', photo:'📷', points:50, status:'Pending'},
+    ];
+    await sSet('participation', partic);
+  }
+  let policies = await sGet('policies', null);
+  if(!policies){
+    policies = [
+      {id:uid('pl'), title:'Anti-Bribery & Corruption Policy', dept:'Management', version:'v2.1', updated:'2026-01-10'},
+      {id:uid('pl'), title:'Data Privacy & Security Policy', dept:'IT', version:'v3.0', updated:'2026-04-02'},
+      {id:uid('pl'), title:'Code of Conduct', dept:'Human Resources', version:'v1.5', updated:'2025-11-20'},
+    ];
+    await sSet('policies', policies);
+  }
+  let acks = await sGet('acks', null);
+  if(!acks){ acks = [ {id:uid('ak'), policy:'Code of Conduct', employee: STATE.user.name, acknowledged:false} ]; await sSet('acks', acks); }
+
+  let audits = await sGet('audits', null);
+  if(!audits){
+    audits = [
+      {id:uid('au'), title:'Q2 Financial Compliance Audit', dept:'Finance', auditor:'External — KPMG', date:'2026-06-10', findings:'2 minor gaps in expense approvals', status:'Resolved'},
+      {id:uid('au'), title:'IT Security & Access Audit', dept:'IT', auditor:'Internal — Security Team', date:'2026-05-22', findings:'Outdated access rights for 4 accounts', status:'Open'},
+    ];
+    await sSet('audits', audits);
+  }
+  let issues = await sGet('issues', null);
+  if(!issues){
+    issues = [
+      {id:uid('is'), issue:'Delayed vendor due-diligence checks', severity:'Medium', dept:'Finance', status:'Open'},
+      {id:uid('is'), issue:'Unpatched server access logs', severity:'High', dept:'IT', status:'Open'},
+      {id:uid('is'), issue:'Missing diversity data for Q1', severity:'Low', dept:'Human Resources', status:'Resolved'},
+    ];
+    await sSet('issues', issues);
+  }
+  let challenges = await sGet('challenges', null);
+  if(!challenges){
+    challenges = [
+      {id:uid('ch'), name:'No-Print Week', desc:'Go paperless for 5 working days.', points:80, dept:'All', joined:[], deadline:'2026-07-25'},
+      {id:uid('ch'), name:'Cycle to Work Sprint', desc:'Log 3 cycling commutes this month.', points:120, dept:'All', joined:[], deadline:'2026-08-01'},
+      {id:uid('ch'), name:'Energy Saver Challenge', desc:'Shut down idle systems every evening for 2 weeks.', points:100, dept:'IT', joined:[], deadline:'2026-07-30'},
+    ];
+    await sSet('challenges', challenges);
+  }
+  let deptsCfg = await sGet('deptsCfg', null);
+  if(!deptsCfg){
+    deptsCfg = DEPTS.map((d,i)=>({id:uid('d'), name:d, code:d.slice(0,3).toUpperCase(), head:'—', empCount: 20+i*7, status:'Active'}));
+    await sSet('deptsCfg', deptsCfg);
+  }
+  seeded = true;
+}
+
+/* ================= RENDER ROUTER ================= */
+function render(key){
+  const c = document.getElementById('content');
+  const routes = {
+    'dash-overview': renderOverview,
+    'dash-products': renderProducts,
+    'dash-carbon': renderCarbon,
+    'dash-goals': renderGoals,
+    'social-csr': renderCSR,
+    'social-participation': renderParticipation,
+    'social-diversity': renderDiversity,
+    'gov-policies': renderPolicies,
+    'gov-ack': renderAck,
+    'gov-audits': renderAudits,
+    'gov-issues': renderIssues,
+    'game-challenges': renderChallenges,
+    'game-myquest': renderMyQuest,
+    'game-badges': renderBadges,
+    'game-rewards': renderRewards,
+    'game-leaderboard': renderLeaderboard,
+    'rep-env': ()=>renderReport('Environmental'),
+    'rep-social': ()=>renderReport('Social'),
+    'rep-gov': ()=>renderReport('Governance'),
+    'rep-summary': renderESGSummary,
+    'rep-custom': renderCustomReport,
+    'set-depts': renderDeptSettings,
+    'set-categories': renderCategories,
+    'set-notifs': renderNotifSettings,
+  };
+  (routes[key]||renderOverview)(c);
+}
+
+/* ---------- OVERVIEW ---------- */
+async function renderOverview(c){
+  const goals = await sGet('goals', []);
+  const issues = await sGet('issues', []);
+  const challenges = await sGet('challenges', []);
+  const openIssues = issues.filter(i=>i.status==='Open').length;
+  c.innerHTML = `
+    <div class="page-head"><div><h1 class="display">Welcome back, ${STATE.user.name.split(' ')[0]} 👋</h1><p>${STATE.user.dept} · Here's your organization's ESG pulse today.</p></div></div>
+    <div class="grid grid-4" style="margin-bottom:20px;">
+      <div class="card stat-card"><div class="top"><span class="icon">🌱</span><span class="trend up">+4.2%</span></div><div class="val">${goals.length}</div><div class="lbl">Active Environmental Goals</div></div>
+      <div class="card stat-card"><div class="top"><span class="icon">🤝</span><span class="trend up">+12%</span></div><div class="val">${(await sGet('participation',[])).length}</div><div class="lbl">Social Participations</div></div>
+      <div class="card stat-card"><div class="top"><span class="icon">⚖️</span><span class="trend ${openIssues>0?'down':'up'}">${openIssues} open</span></div><div class="val">${issues.length}</div><div class="lbl">Compliance Issues</div></div>
+      <div class="card stat-card"><div class="top"><span class="icon">🏆</span><span class="trend up">+${STATE.user.points||0}</span></div><div class="val">${challenges.length}</div><div class="lbl">Live Challenges</div></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="section-title">📉 CO₂ Reduction by Department</div>
+        ${barChart(goals)}
+      </div>
+      <div class="card">
+        <div class="section-title">🧭 ESG Pillar Balance</div>
+        ${donutChart()}
+      </div>
+    </div>`;
+}
+function barChart(goals){
+  const byDept = {};
+  goals.forEach(g=>{ byDept[g.dept] = (byDept[g.dept]||0) + (g.current||0); });
+  const keys = Object.keys(byDept);
+  const max = Math.max(...Object.values(byDept), 1);
+  return `<div class="bar-chart">${keys.map(k=>`<div class="bar" style="height:${Math.max(6,(byDept[k]/max)*150)}px"><span>${byDept[k]}</span></div>`).join('')}</div>
+  <div class="lbls">${keys.map(k=>`<div>${k}</div>`).join('')}</div>`;
+}
+function donutChart(){
+  const vals=[42,33,25]; const colors=['var(--sage)','var(--tidal)','var(--gold)'];
+  const total = vals.reduce((a,b)=>a+b,0);
+  let acc=0;
+  const stops = vals.map((v,i)=>{ const start=acc/total*100; acc+=v; const end=acc/total*100; return `${colors[i]} ${start}% ${end}%`; }).join(',');
+  return `<div class="donut-wrap">
+    <div style="width:120px;height:120px;border-radius:50%;background:conic-gradient(${stops});"></div>
+    <div>
+      <div><span class="legend-dot" style="background:var(--sage)"></span>Environmental — 42%</div>
+      <div style="margin-top:8px;"><span class="legend-dot" style="background:var(--tidal)"></span>Social — 33%</div>
+      <div style="margin-top:8px;"><span class="legend-dot" style="background:var(--gold)"></span>Governance — 25%</div>
+    </div>
+  </div>`;
+}
+
+/* ---------- PRODUCT ESG PROFILES ---------- */
+async function renderProducts(c){
+  const products = await sGet('products', null) || (await (async()=>{
+    const d=[{id:uid('pr'),name:'EcoPack Recycled Boxes',category:'Packaging',score:88,carbon:'Low'},
+             {id:uid('pr'),name:'GreenServe Cloud Plan',category:'IT Service',score:74,carbon:'Medium'},
+             {id:uid('pr'),name:'SolarLite Office Kit',category:'Hardware',score:91,carbon:'Low'}];
+    await sSet('products', d); return d;
+  })());
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Product ESG Profiles</h1><p>Sustainability scoring across product lines.</p></div>
+    <button class="btn btn-forest btn-sm" onclick="toast('Profile builder coming soon.')">+ New Profile</button></div>
+    <div class="grid grid-3">${products.map(p=>`
+      <div class="card">
+        <div style="display:flex; justify-content:space-between;"><b>${p.name}</b><span class="tag ${p.carbon==='Low'?'approved':p.carbon==='Medium'?'pending':'open'}">${p.carbon} Carbon</span></div>
+        <p style="color:var(--text-soft); font-size:13px; margin:8px 0;">${p.category}</p>
+        <div class="progress-bar"><i style="width:${p.score}%"></i></div>
+        <p style="margin-top:8px; font-size:12.5px;">ESG Score: <b>${p.score}/100</b></p>
+      </div>`).join('')}</div>`;
+}
+
+/* ---------- CARBON TRANSACTIONS ---------- */
+async function renderCarbon(c){
+  const tx = await sGet('carbonTx', null) || (await (async()=>{
+    const d=[{id:uid('tx'),type:'Offset Purchase',dept:'Operations',amount:'250 tCO₂e',date:'2026-06-01',cost:'₹4,80,000'},
+             {id:uid('tx'),type:'Emission Credit Sale',dept:'IT',amount:'80 tCO₂e',date:'2026-06-18',cost:'₹1,52,000'},
+             {id:uid('tx'),type:'Offset Purchase',dept:'Finance',amount:'120 tCO₂e',date:'2026-07-02',cost:'₹2,30,000'}];
+    await sSet('carbonTx', d); return d;
+  })());
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Carbon Transactions</h1><p>Offset purchases and credit trades ledger.</p></div></div>
+    <div class="card table-wrap"><table><thead><tr><th>Type</th><th>Department</th><th>Amount</th><th>Date</th><th>Cost</th></tr></thead><tbody>
+    ${tx.map(t=>`<tr><td>${t.type}</td><td>${t.dept}</td><td class="mono">${t.amount}</td><td>${fmtDate(t.date)}</td><td>${t.cost}</td></tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+/* ---------- ENVIRONMENTAL GOALS (main required table) ---------- */
+async function renderGoals(c){
+  const goals = await sGet('goals', []);
+  c.innerHTML = `
+    <div class="page-head"><div><h1 class="display">Environmental Goals</h1><p>Track emission and resource targets across departments.</p></div>
+      <button class="btn btn-forest btn-sm" onclick="openGoalModal()">+ Add Goal</button></div>
+    <div class="card table-wrap">
+      <table><thead><tr><th>Name</th><th>Department</th><th>Target CO₂ (t)</th><th>Current CO₂ (t)</th><th>Progress</th><th>Deadline</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>${goals.map(g=>{
+        const pct = Math.min(100, Math.round((g.current/g.target)*100));
+        const cls = g.status==='Completed'?'completed':g.status==='On Track'?'ontrack':'active';
+        return `<tr>
+          <td><b>${g.name}</b></td><td>${g.dept}</td><td class="mono">${g.target}</td><td class="mono">${g.current}</td>
+          <td style="min-width:140px;"><div class="progress-bar"><i style="width:${pct}%"></i></div><span style="font-size:11px; color:var(--text-soft);">${pct}%</span></td>
+          <td>${fmtDate(g.deadline)}</td><td><span class="tag ${cls}">${g.status}</span></td>
+          <td><div class="row-actions">
+            <button class="mini-btn" onclick='openGoalModal(${JSON.stringify(g).replace(/'/g,"&apos;")})'>✏️</button>
+            <button class="mini-btn danger" onclick="deleteGoal('${g.id}')">🗑️</button>
+          </div></td>
+        </tr>`;
+      }).join('') || `<tr><td colspan="8"><div class="empty">No goals yet.</div></td></tr>`}</tbody></table>
+    </div>`;
+}
+function openGoalModal(g){
+  const editing = !!g;
+  showModal(`
+    <button class="modal-close-x" onclick="closeModal()">✕</button>
+    <h3>${editing?'Edit':'Add'} Environmental Goal</h3>
+    <div class="field"><label>Goal Name</label><input id="gName" value="${g?g.name:''}" placeholder="e.g. Reduce Fleet Emissions"></div>
+    <div class="field"><label>Department</label><select id="gDept">${DEPTS.map(d=>`<option ${g&&g.dept===d?'selected':''}>${d}</option>`).join('')}</select></div>
+    <div class="field-row">
+      <div class="field"><label>Target CO₂ (t)</label><input type="number" id="gTarget" value="${g?g.target:''}"></div>
+      <div class="field"><label>Current CO₂ (t)</label><input type="number" id="gCurrent" value="${g?g.current:''}"></div>
+    </div>
+    <div class="field"><label>Deadline</label><input type="date" id="gDeadline" value="${g?g.deadline:''}"></div>
+    <div class="field"><label>Status</label><select id="gStatus">
+      ${['Active','On Track','Completed'].map(s=>`<option ${g&&g.status===s?'selected':''}>${s}</option>`).join('')}
+    </select></div>
+    <button class="btn btn-primary btn-block" onclick="saveGoal(${editing?`'${g.id}'`:'null'})">Save Goal</button>
+  `);
+}
+async function saveGoal(id){
+  const name=document.getElementById('gName').value.trim();
+  const dept=document.getElementById('gDept').value;
+  const target=parseFloat(document.getElementById('gTarget').value);
+  const current=parseFloat(document.getElementById('gCurrent').value);
+  const deadline=document.getElementById('gDeadline').value;
+  const status=document.getElementById('gStatus').value;
+  if(!name||!target||!deadline||isNaN(current)){ toast('Please fill all fields correctly.','danger','⚠️'); return; }
+  let goals = await sGet('goals', []);
+  if(id){
+    goals = goals.map(g=> g.id===id ? {...g,name,dept,target,current,deadline,status} : g);
+    toast('Goal updated.');
+  } else {
+    goals.push({id:uid('g'),name,dept,target,current,deadline,status});
+    toast('Goal added.','','🌱');
+  }
+  await sSet('goals', goals);
+  closeModal(); render('dash-goals');
+}
+async function deleteGoal(id){
+  if(!confirm('Delete this environmental goal?')) return;
+  let goals = await sGet('goals', []);
+  goals = goals.filter(g=>g.id!==id);
+  await sSet('goals', goals);
+  toast('Goal deleted.','danger','🗑️');
+  render('dash-goals');
+}
+
+/* ---------- SOCIAL: CSR ---------- */
+async function renderCSR(c){
+  const csr = await sGet('csr', []);
+  const isHR = STATE.user.dept==='Human Resources';
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">CSR Activities</h1><p>Ongoing community & social initiatives.</p></div>
+    ${isHR?`<button class="btn btn-forest btn-sm" onclick="openCsrModal()">+ Add Activity (HR)</button>`:''}</div>
+    <div class="grid grid-3">${csr.map(a=>`
+      <div class="card">
+        <b>${a.name}</b><p style="font-size:12.5px; color:var(--text-soft); margin:6px 0;">${a.dept} · ${fmtDate(a.date)}</p>
+        <p style="font-size:13px; margin-bottom:10px;">👥 ${a.joined.length} joined</p>
+        <button class="btn btn-outline btn-sm" onclick="joinCSR('${a.id}')">${a.joined.includes(STATE.user.name)?'✓ Joined':'Join Activity'}</button>
+      </div>`).join('')}</div>`;
+}
+async function joinCSR(id){
+  let csr = await sGet('csr', []);
+  csr = csr.map(a=>{
+    if(a.id===id && !a.joined.includes(STATE.user.name)) a.joined.push(STATE.user.name);
+    return a;
+  });
+  await sSet('csr', csr);
+  toast('You joined the activity!','gold','🤝');
+  render('social-csr');
+}
+function openCsrModal(){
+  showModal(`<button class="modal-close-x" onclick="closeModal()">✕</button><h3>Add CSR Activity</h3>
+  <div class="field"><label>Activity Name</label><input id="csrName" placeholder="e.g. Tree Plantation Drive"></div>
+  <div class="field"><label>Department</label><select id="csrDept">${DEPTS.map(d=>`<option>${d}</option>`).join('')}</select></div>
+  <div class="field"><label>Date</label><input type="date" id="csrDate"></div>
+  <button class="btn btn-primary btn-block" onclick="saveCsr()">Add Activity</button>`);
+}
+async function saveCsr(){
+  const name=document.getElementById('csrName').value.trim();
+  const dept=document.getElementById('csrDept').value;
+  const date=document.getElementById('csrDate').value;
+  if(!name||!date){ toast('Please fill all fields.','danger','⚠️'); return; }
+  let csr = await sGet('csr', []);
+  csr.push({id:uid('c'),name,dept,date,joined:[]});
+  await sSet('csr', csr);
+  closeModal(); toast('CSR activity added.'); render('social-csr');
+}
+
+/* ---------- SOCIAL: PARTICIPATION ---------- */
+async function renderParticipation(c){
+  const partic = await sGet('participation', []);
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Employee Participation</h1><p>Submit proof of participation to earn points.</p></div>
+    <button class="btn btn-forest btn-sm" onclick="openParticModal()">+ Submit Proof</button></div>
+    <div class="card table-wrap"><table><thead><tr><th>Employee</th><th>Activity</th><th>Proof</th><th>Points</th><th>Status</th></tr></thead><tbody>
+    ${partic.map(p=>`<tr><td>${p.employee}</td><td>${p.activity}</td><td style="font-size:20px;">${p.photo}</td><td class="mono">${p.points}</td><td><span class="tag ${p.status==='Approved'?'approved':'pending'}">${p.status}</span></td></tr>`).join('')}
+    </tbody></table></div>`;
+}
+function openParticModal(){
+  showModal(`<button class="modal-close-x" onclick="closeModal()">✕</button><h3>Submit Participation Proof</h3>
+  <div class="field"><label>Activity</label><input id="pActivity" placeholder="e.g. Beach Cleanup Drive"></div>
+  <div class="field"><label>Upload Photo Proof</label><input type="file" id="pPhoto" accept="image/*"></div>
+  <div class="field"><label>Points Requested</label><input type="number" id="pPoints" value="50"></div>
+  <button class="btn btn-primary btn-block" onclick="savePartic()">Submit for Approval</button>`);
+}
+async function savePartic(){
+  const activity=document.getElementById('pActivity').value.trim();
+  const points=parseInt(document.getElementById('pPoints').value)||0;
+  if(!activity){ toast('Please enter an activity.','danger','⚠️'); return; }
+  let partic = await sGet('participation', []);
+  partic.push({id:uid('p'),employee:STATE.user.name,activity,photo:'📷',points,status:'Pending'});
+  await sSet('participation', partic);
+  closeModal(); toast('Submitted for HR approval.','','📸');
+  render('social-participation');
+}
+
+/* ---------- SOCIAL: DIVERSITY ---------- */
+async function renderDiversity(c){
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Diversity & Inclusion</h1><p>Workforce composition snapshot.</p></div></div>
+    <div class="grid grid-2">
+      <div class="card"><div class="section-title">Gender Distribution</div>${donutStatic([54,44,2],['var(--sage)','var(--tidal)','var(--gold)'],['Women — 54%','Men — 44%','Non-binary — 2%'])}</div>
+      <div class="card"><div class="section-title">Department Diversity Index</div>${barChartRaw({'HR':82,'IT':71,'Finance':66,'Ops':74,'Mgmt':60,'Mktg':78})}</div>
+    </div>`;
+}
+function donutStatic(vals,colors,labels){
+  const total=vals.reduce((a,b)=>a+b,0); let acc=0;
+  const stops=vals.map((v,i)=>{const start=acc/total*100; acc+=v; const end=acc/total*100; return `${colors[i]} ${start}% ${end}%`;}).join(',');
+  return `<div class="donut-wrap"><div style="width:120px;height:120px;border-radius:50%;background:conic-gradient(${stops});"></div>
+  <div>${labels.map((l,i)=>`<div style="margin-bottom:8px;"><span class="legend-dot" style="background:${colors[i]}"></span>${l}</div>`).join('')}</div></div>`;
+}
+function barChartRaw(obj){
+  const keys=Object.keys(obj); const max=Math.max(...Object.values(obj),1);
+  return `<div class="bar-chart">${keys.map(k=>`<div class="bar" style="height:${(obj[k]/max)*150}px"><span>${obj[k]}</span></div>`).join('')}</div>
+  <div class="lbls">${keys.map(k=>`<div>${k}</div>`).join('')}</div>`;
+}
+
+/* ---------- GOVERNANCE: POLICIES ---------- */
+async function renderPolicies(c){
+  const policies = await sGet('policies', []);
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Policies</h1><p>Corporate governance documentation.</p></div></div>
+  <div class="card table-wrap"><table><thead><tr><th>Title</th><th>Department</th><th>Version</th><th>Last Updated</th></tr></thead><tbody>
+  ${policies.map(p=>`<tr><td><b>${p.title}</b></td><td>${p.dept}</td><td class="mono">${p.version}</td><td>${fmtDate(p.updated)}</td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+/* ---------- GOVERNANCE: ACKNOWLEDGEMENT ---------- */
+async function renderAck(c){
+  const policies = await sGet('policies', []);
+  let acks = await sGet('acks', []);
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Policy Acknowledgement</h1><p>Confirm you've read and understood each policy.</p></div></div>
+  <div class="grid grid-3">${policies.map(p=>{
+    const acked = acks.some(a=>a.policy===p.title && a.employee===STATE.user.name);
+    return `<div class="card"><b>${p.title}</b><p style="font-size:12.5px; color:var(--text-soft); margin:8px 0;">${p.version} · ${p.dept}</p>
+    <button class="btn ${acked?'btn-outline':'btn-forest'} btn-sm" ${acked?'disabled':''} onclick="ackPolicy('${p.title}')">${acked?'✓ Acknowledged':'Acknowledge'}</button></div>`;
+  }).join('')}</div>`;
+}
+async function ackPolicy(title){
+  let acks = await sGet('acks', []);
+  acks.push({id:uid('ak'),policy:title,employee:STATE.user.name,acknowledged:true});
+  await sSet('acks', acks);
+  toast('Policy acknowledged.','','✅');
+  render('gov-ack');
+}
+/* ---------- GOVERNANCE: AUDITS ---------- */
+async function renderAudits(c){
+  const audits = await sGet('audits', []);
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Audits</h1><p>Internal & external audit trail.</p></div>
+    <button class="btn btn-forest btn-sm" onclick="openAuditModal()">+ New Audit</button></div>
+  <div class="card table-wrap"><table><thead><tr><th>Title</th><th>Department</th><th>Auditor</th><th>Date</th><th>Findings</th><th>Status</th></tr></thead><tbody>
+  ${audits.map(a=>`<tr><td><b>${a.title}</b></td><td>${a.dept}</td><td>${a.auditor}</td><td>${fmtDate(a.date)}</td><td style="max-width:220px;">${a.findings}</td><td><span class="tag ${a.status==='Resolved'?'resolved':'open'}">${a.status}</span></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+function openAuditModal(){
+  showModal(`<button class="modal-close-x" onclick="closeModal()">✕</button><h3>New Audit</h3>
+  <div class="field"><label>Title</label><input id="auTitle" placeholder="e.g. Q3 Compliance Audit"></div>
+  <div class="field"><label>Department</label><select id="auDept">${DEPTS.map(d=>`<option>${d}</option>`).join('')}</select></div>
+  <div class="field"><label>Auditor</label><input id="auAuditor" placeholder="e.g. Internal — Risk Team"></div>
+  <div class="field"><label>Date</label><input type="date" id="auDate"></div>
+  <div class="field"><label>Findings</label><input id="auFindings" placeholder="Brief findings summary"></div>
+  <button class="btn btn-primary btn-block" onclick="saveAudit()">Save Audit</button>`);
+}
+async function saveAudit(){
+  const title=document.getElementById('auTitle').value.trim();
+  const dept=document.getElementById('auDept').value;
+  const auditor=document.getElementById('auAuditor').value.trim();
+  const date=document.getElementById('auDate').value;
+  const findings=document.getElementById('auFindings').value.trim();
+  if(!title||!auditor||!date){ toast('Please fill all required fields.','danger','⚠️'); return; }
+  let audits = await sGet('audits', []);
+  audits.push({id:uid('au'),title,dept,auditor,date,findings:findings||'Pending review',status:'Open'});
+  await sSet('audits', audits);
+  closeModal(); toast('Audit created.'); render('gov-audits');
+}
+/* ---------- GOVERNANCE: ISSUES ---------- */
+async function renderIssues(c){
+  const issues = await sGet('issues', []);
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Compliance Issues</h1><p>Track and resolve governance risks.</p></div>
+    <button class="btn btn-forest btn-sm" onclick="openIssueModal()">+ Log Issue</button></div>
+  <div class="card table-wrap"><table><thead><tr><th>Issue</th><th>Severity</th><th>Department</th><th>Status</th><th>Action</th></tr></thead><tbody>
+  ${issues.map(i=>`<tr><td>${i.issue}</td><td><span class="tag ${i.severity.toLowerCase()}">${i.severity}</span></td><td>${i.dept}</td><td><span class="tag ${i.status==='Open'?'open':'resolved'}">${i.status}</span></td>
+  <td>${i.status==='Open'?`<button class="btn-sm btn-outline" onclick="resolveIssue('${i.id}')">Mark Resolved</button>`:'—'}</td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+async function resolveIssue(id){
+  let issues = await sGet('issues', []);
+  issues = issues.map(i=> i.id===id ? {...i,status:'Resolved'} : i);
+  await sSet('issues', issues);
+  toast('Issue marked resolved.','','✅'); render('gov-issues');
+}
+function openIssueModal(){
+  showModal(`<button class="modal-close-x" onclick="closeModal()">✕</button><h3>Log Compliance Issue</h3>
+  <div class="field"><label>Issue Description</label><input id="isIssue" placeholder="Describe the issue"></div>
+  <div class="field"><label>Severity</label><select id="isSeverity"><option>Low</option><option>Medium</option><option>High</option></select></div>
+  <div class="field"><label>Department</label><select id="isDept">${DEPTS.map(d=>`<option>${d}</option>`).join('')}</select></div>
+  <button class="btn btn-primary btn-block" onclick="saveIssue()">Log Issue</button>`);
+}
+async function saveIssue(){
+  const issue=document.getElementById('isIssue').value.trim();
+  const severity=document.getElementById('isSeverity').value;
+  const dept=document.getElementById('isDept').value;
+  if(!issue){ toast('Please describe the issue.','danger','⚠️'); return; }
+  let issues = await sGet('issues', []);
+  issues.push({id:uid('is'),issue,severity,dept,status:'Open'});
+  await sSet('issues', issues);
+  closeModal(); toast('Issue logged.'); render('gov-issues');
+}
+
+/* ================= GAME: ECOQUEST ARENA ================= */
+async function renderChallenges(c){
+  const challenges = await sGet('challenges', []);
+  c.innerHTML = arenaHero() + `
+  <div class="section-title">🔥 Live Challenges</div>
+  <div class="grid grid-3">${challenges.map(ch=>{
+    const joined = ch.joined.includes(STATE.user.name);
+    return `<div class="challenge-card">
+      <div class="badge-pts">+${ch.points} pts</div>
+      <b>${ch.name}</b>
+      <p style="font-size:13px; color:var(--text-soft); margin:8px 0 12px;">${ch.desc}</p>
+      <p style="font-size:12px; color:var(--text-soft); margin-bottom:12px;">⏳ Ends ${fmtDate(ch.deadline)} · 👥 ${ch.joined.length} joined</p>
+      <button class="btn ${joined?'btn-outline':'btn-primary'} btn-sm" onclick="joinChallenge('${ch.id}')">${joined?'✓ Joined':'Join Challenge'}</button>
+    </div>`;
+  }).join('')}</div>`;
+}
+function arenaHero(){
+  const dots = Array.from({length:10}).map(()=>{
+    const colors=['var(--gold)','var(--sage)','var(--tidal)','var(--coral)'];
+    const c = colors[Math.floor(Math.random()*colors.length)];
+    const size = 6+Math.random()*8;
+    return `<div class="confetti-dot" style="background:${c}; width:${size}px; height:${size}px; top:${Math.random()*90}%; left:${Math.random()*95}%; animation-delay:${Math.random()*2}s;"></div>`;
+  }).join('');
+  return `<div class="arena-hero">${dots}
+    <h1 class="display">🏆 EcoQuest Arena</h1>
+    <p>Complete sustainability quests, earn points, unlock badges, and climb the leaderboard — solo or as a department squad.</p>
+    <div style="margin-top:16px; display:flex; gap:24px; flex-wrap:wrap;">
+      <div><div style="font-size:22px; font-weight:800; color:#fff;">${STATE.user.points||0}</div><div style="font-size:11px; color:var(--sage-light); text-transform:uppercase;">Your Points</div></div>
+      <div><div style="font-size:22px; font-weight:800; color:#fff;">${(STATE.user.badges||[]).length}</div><div style="font-size:11px; color:var(--sage-light); text-transform:uppercase;">Badges Earned</div></div>
+      <div><div style="font-size:22px; font-weight:800; color:#fff;">🥈 #4</div><div style="font-size:11px; color:var(--sage-light); text-transform:uppercase;">Your Rank</div></div>
+    </div>
+  </div>`;
+}
+async function joinChallenge(id){
+  let challenges = await sGet('challenges', []);
+  challenges = challenges.map(ch=>{
+    if(ch.id===id && !ch.joined.includes(STATE.user.name)) ch.joined.push(STATE.user.name);
+    return ch;
+  });
+  await sSet('challenges', challenges);
+  toast('Challenge joined — good luck! 🚀','gold','🏁');
+  render('game-challenges');
+}
+async function renderMyQuest(c){
+  const challenges = await sGet('challenges', []);
+  const mine = challenges.filter(ch=>ch.joined.includes(STATE.user.name));
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Challenge Participation</h1><p>Your active quests.</p></div></div>
+  ${mine.length? `<div class="grid grid-3">${mine.map(ch=>`
+    <div class="challenge-card"><div class="badge-pts">+${ch.points} pts</div><b>${ch.name}</b>
+    <p style="font-size:13px; color:var(--text-soft); margin:8px 0;">${ch.desc}</p>
+    <div class="progress-bar"><i style="width:${Math.floor(Math.random()*60)+20}%"></i></div>
+    <button class="btn btn-forest btn-sm" style="margin-top:12px;" onclick="claimPoints('${ch.id}')">Mark Complete & Claim</button></div>`).join('')}</div>`
+    : `<div class="card"><div class="empty"><div class="e-icon">🎯</div>No active quests yet — join one from Challenges!</div></div>`}`;
+}
+async function claimPoints(id){
+  let challenges = await sGet('challenges', []);
+  const ch = challenges.find(c=>c.id===id);
+  if(!ch) return;
+  let users = await sGet('users', {});
+  const u = users[STATE.user.email];
+  u.points = (u.points||0) + ch.points;
+  const newBadge = u.points>=100 && !u.badges.includes('Green Starter');
+  if(newBadge) u.badges.push('Green Starter');
+  users[STATE.user.email] = u;
+  await sSet('users', users);
+  STATE.user = u;
+  celebrate();
+  toast(`+${ch.points} points claimed!${newBadge?' New badge unlocked 🎖️':''}`,'gold','🎉');
+  render('game-myquest');
+}
+function celebrate(){
+  const wrap = document.createElement('div');
+  wrap.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:200;overflow:hidden;';
+  document.body.appendChild(wrap);
+  const colors=['#C9A227','#74A57F','#2C6E7F','#C1613E'];
+  for(let i=0;i<40;i++){
+    const p=document.createElement('div');
+    const c=colors[i%colors.length];
+    p.style.cssText=`position:absolute; top:-10px; left:${Math.random()*100}%; width:8px; height:8px; background:${c}; border-radius:2px; animation:fall ${1.6+Math.random()}s ease-in forwards;`;
+    wrap.appendChild(p);
+  }
+  const style=document.createElement('style');
+  style.textContent='@keyframes fall{to{transform:translateY(100vh) rotate(400deg); opacity:0;}}';
+  document.head.appendChild(style);
+  setTimeout(()=>wrap.remove(), 2600);
+}
+const ALL_BADGES = [
+  {name:'Green Starter', icon:'🌱', desc:'Earn your first 100 points'},
+  {name:'Carbon Cutter', icon:'✂️', desc:'Complete 3 environmental challenges'},
+  {name:'Community Champion', icon:'🤝', desc:'Join 5 CSR activities'},
+  {name:'Policy Pro', icon:'📜', desc:'Acknowledge all active policies'},
+  {name:'Streak Master', icon:'🔥', desc:'7-day activity streak'},
+  {name:'Top Performer', icon:'🏅', desc:'Reach #1 on the leaderboard'},
+];
+async function renderBadges(c){
+  const mine = STATE.user.badges||[];
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Badges</h1><p>${mine.length}/${ALL_BADGES.length} unlocked</p></div></div>
+  <div class="grid grid-4">${ALL_BADGES.map(b=>{
+    const unlocked = mine.includes(b.name);
+    return `<div class="badge-tile ${unlocked?'':'locked'}"><div class="badge-icon">${b.icon}</div><div class="name">${b.name}</div><div style="font-size:11px; color:var(--text-soft); margin-top:4px;">${b.desc}</div></div>`;
+  }).join('')}</div>`;
+}
+async function renderRewards(c){
+  const pts = STATE.user.points||0;
+  const rewards = [
+    {name:'Extra WFH Day', cost:150, icon:'🏠'},
+    {name:'Company Swag Kit', cost:100, icon:'🎁'},
+    {name:'₹500 Green Voucher', cost:250, icon:'🎫'},
+    {name:'Reserved Parking (1 wk)', cost:80, icon:'🚗'},
+    {name:'Lunch with CEO', cost:400, icon:'🍽️'},
+    {name:'Plant-a-Tree in your name', cost:60, icon:'🌳'},
+  ];
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Rewards Store</h1><p>You have <b>${pts}</b> points to redeem.</p></div></div>
+  <div class="grid grid-3">${rewards.map(r=>`
+    <div class="card" style="text-align:center;"><div style="font-size:30px;">${r.icon}</div><b>${r.name}</b>
+    <p class="mono" style="margin:8px 0; color:var(--tidal);">${r.cost} pts</p>
+    <button class="btn ${pts>=r.cost?'btn-forest':'btn-outline'} btn-sm" ${pts<r.cost?'disabled':''} onclick="redeem('${r.name}',${r.cost})">${pts>=r.cost?'Redeem':'Not enough points'}</button></div>`).join('')}</div>`;
+}
+async function redeem(name, cost){
+  let users = await sGet('users', {});
+  const u = users[STATE.user.email];
+  u.points -= cost;
+  users[STATE.user.email]=u; await sSet('users', users); STATE.user=u;
+  celebrate();
+  toast(`Redeemed: ${name}! 🎉`,'gold');
+  render('game-rewards');
+}
+async function renderLeaderboard(c){
+  const users = await sGet('users', {});
+  const list = Object.values(users).sort((a,b)=>(b.points||0)-(a.points||0));
+  const deptTotals = {};
+  list.forEach(u=>{ deptTotals[u.dept]=(deptTotals[u.dept]||0)+(u.points||0); });
+  const deptRank = Object.entries(deptTotals).sort((a,b)=>b[1]-a[1]);
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Leaderboard</h1><p>Individual and department-wide rankings.</p></div></div>
+  <div class="grid grid-2">
+    <div class="card"><div class="section-title">🧑 Individual Ranking</div>
+      ${list.map((u,i)=>`<div class="lb-row"><div class="lb-rank ${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+      <div class="lb-avatar">${initials(u.name)}</div><div class="lb-name">${u.name}<div style="font-size:11px; color:var(--text-soft); font-weight:400;">${u.dept}</div></div><div class="lb-pts">${u.points||0} pts</div></div>`).join('') || `<div class="empty">No players yet.</div>`}
+    </div>
+    <div class="card"><div class="section-title">🏢 Department Ranking</div>
+      ${deptRank.map(([d,pts],i)=>`<div class="lb-row"><div class="lb-rank ${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+      <div class="lb-name">${d}</div><div class="lb-pts">${pts} pts</div></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ================= REPORTS ================= */
+async function renderReport(kind){
+  const c = document.getElementById('content');
+  const goals = await sGet('goals', []);
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">${kind} Report</h1><p>Auto-generated summary — ${new Date().toLocaleDateString('en-IN',{month:'long',year:'numeric'})}</p></div>
+    <button class="btn btn-outline btn-sm" onclick="toast('Report exported as PDF (demo).','','📄')">⬇ Export PDF</button></div>
+    <div class="card" style="margin-bottom:18px;"><div class="section-title">Key Metrics</div>${barChart(goals)}</div>
+    <div class="card"><div class="section-title">Narrative Summary</div>
+    <p style="line-height:1.7; color:var(--text-soft);">This ${kind.toLowerCase()} report reflects consolidated performance across all departments for the current reporting period, based on live platform data including goal progress, participation, and compliance records.</p></div>`;
+}
+async function renderESGSummary(c){
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">ESG Summary</h1><p>Composite scorecard across all three pillars.</p></div></div>
+  <div class="grid grid-3">
+    <div class="card stat-card"><div class="icon">🌱</div><div class="val">78/100</div><div class="lbl">Environmental Score</div></div>
+    <div class="card stat-card"><div class="icon">🤝</div><div class="val">84/100</div><div class="lbl">Social Score</div></div>
+    <div class="card stat-card"><div class="icon">⚖️</div><div class="val">71/100</div><div class="lbl">Governance Score</div></div>
+  </div>
+  <div class="card" style="margin-top:18px;"><div class="section-title">Overall ESG Rating: <span style="color:var(--ok);">A-</span></div>${donutChart()}</div>`;
+}
+async function renderCustomReport(c){
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Custom Report Builder</h1><p>Select modules to compile a tailored report.</p></div></div>
+  <div class="card">
+    ${['Environmental Goals','Carbon Transactions','CSR Activities','Diversity Metrics','Policy Acknowledgement','Audit Findings','Compliance Issues','Game Leaderboard'].map(m=>`
+    <label style="display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); font-size:14px;"><input type="checkbox" checked> ${m}</label>`).join('')}
+    <button class="btn btn-primary btn-block" style="margin-top:18px;" onclick="toast('Custom report generated!','','📊')">Generate Report</button>
+  </div>`;
+}
+
+/* ================= SETTINGS ================= */
+async function renderDeptSettings(c){
+  const depts = await sGet('deptsCfg', []);
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Departments</h1><p>Manage organizational units.</p></div></div>
+  <div class="card table-wrap"><table><thead><tr><th>Name</th><th>Code</th><th>Head</th><th>Employees</th><th>Status</th></tr></thead><tbody>
+  ${depts.map(d=>`<tr><td><b>${d.name}</b></td><td class="mono">${d.code}</td><td>${d.head}</td><td>${d.empCount}</td><td><span class="tag active">${d.status}</span></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+async function renderCategories(c){
+  const cats = ['Emissions','Energy','Water','Waste','Community','Diversity','Ethics','Compliance'];
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Categories</h1><p>ESG data classification tags.</p></div></div>
+  <div class="card"><div style="display:flex; flex-wrap:wrap; gap:10px;">${cats.map(cat=>`<span class="tag ontrack" style="padding:8px 16px; font-size:13px;">${cat}</span>`).join('')}</div></div>`;
+}
+async function renderNotifSettings(c){
+  const opts = ['Email digest (weekly)','Challenge reminders','Approval requests','Audit alerts','Leaderboard updates','Policy update notices'];
+  c.innerHTML = `<div class="page-head"><div><h1 class="display">Notification Settings</h1><p>Control what you get notified about.</p></div></div>
+  <div class="card">${opts.map((o,i)=>`
+  <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);">
+    <span>${o}</span>
+    <label style="position:relative; display:inline-block; width:42px; height:24px;">
+      <input type="checkbox" ${i<3?'checked':''} style="opacity:0; width:0; height:0;" onchange="toast('Preference saved.')">
+      <span style="position:absolute; inset:0; background:${i<3?'var(--sage)':'var(--border)'}; border-radius:24px;"></span>
+    </label>
+  </div>`).join('')}</div>`;
+}
+
+/* ================= MODAL / PROFILE / NOTIFS ================= */
+function showModal(html){ document.getElementById('modalBody').innerHTML = html; document.getElementById('modalOverlay').classList.add('show'); }
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
+document.getElementById('modalOverlay').addEventListener('click', e=>{ if(e.target.id==='modalOverlay') closeModal(); });
+
+function openProfile(){
+  const u = STATE.user;
+  showModal(`<button class="modal-close-x" onclick="closeModal()">✕</button><h3>My Profile</h3>
+  <div class="pic-upload" id="picUpload" onclick="document.getElementById('picInput').click()">
+    ${u.pic?`<img src="${u.pic}">`:`<span class="plus">+</span>`}
+  </div>
+  <input type="file" id="picInput" accept="image/*" class="hidden" onchange="handlePicUpload(event)">
+  <div class="field"><label>Full Name</label><input id="pfName" value="${u.name}"></div>
+  <div class="field"><label>Employee ID</label><input value="${u.empId}" disabled></div>
+  <div class="field"><label>Department</label><select id="pfDept">${DEPTS.map(d=>`<option ${u.dept===d?'selected':''}>${d}</option>`).join('')}</select></div>
+  <div class="field"><label>Email</label><input value="${u.email}" disabled></div>
+  <p style="font-size:12.5px; color:var(--text-soft); margin-bottom:14px;">🏆 ${u.points||0} points · 🎖️ ${(u.badges||[]).length} badges</p>
+  <button class="btn btn-primary btn-block" onclick="saveProfile()">Save Changes</button>`);
+}
+function handlePicUpload(e){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    document.getElementById('picUpload').innerHTML = `<img src="${reader.result}">`;
+    STATE._pendingPic = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+async function saveProfile(){
+  const name = document.getElementById('pfName').value.trim();
+  const dept = document.getElementById('pfDept').value;
+  if(!name){ toast('Name cannot be empty.','danger','⚠️'); return; }
+  let users = await sGet('users', {});
+  const u = users[STATE.user.email];
+  u.name = name; u.dept = dept;
+  if(STATE._pendingPic) u.pic = STATE._pendingPic;
+  users[STATE.user.email] = u; await sSet('users', users);
+  STATE.user = u;
+  document.getElementById('topAvatar').innerHTML = u.pic?`<img src="${u.pic}">`:initials(u.name);
+  closeModal(); toast('Profile updated.','','✅');
+}
+function openNotifs(){
+  document.getElementById('notifDot').style.display='none';
+  showModal(`<button class="modal-close-x" onclick="closeModal()">✕</button><h3>Notifications</h3>
+  <div style="font-size:13.5px; line-height:2;">
+  🎯 New challenge live: <b>Cycle to Work Sprint</b><br>
+  ✅ Your CSR proof was approved (+50 pts)<br>
+  📜 New policy uploaded: Data Privacy v3.0<br>
+  🏅 You're 20 pts away from the next badge!
+  </div>`);
+}
+
+/* ================= INIT ================= */
+initParticles();
+</script>
+</body>
+</html>
 
