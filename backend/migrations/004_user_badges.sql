@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS user_badges (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  badge_id INT,
+  user_id INT,
+  awarded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
