@@ -7,6 +7,32 @@ Production ready full stack scaffold:
 - Local file storage for uploads
 - Docker Compose for local development
 
+# Architecture
+ecosphere/
+├─ backend/
+│  ├─ src/
+│  │  ├─ controllers/
+│  │  ├─ services/
+│  │  ├─ models/
+│  │  ├─ routes/
+│  │  ├─ middlewares/
+│  │  ├─ utils/
+│  │  └─ app.ts
+│  ├─ migrations/
+│  ├─ seeds/
+│  └─ Dockerfile
+├─ frontend/
+│  ├─ src/
+│  │  ├─ components/
+│  │  ├─ pages/
+│  │  ├─ hooks/
+│  │  ├─ services/
+│  │  └─ App.tsx
+│  └─ Dockerfile
+├─ docker-compose.yml
+└─ README.md
+
+
 ## Quick start (local)
 1. Using .env variables, start MySQL and run:
    docker-compose up --build
