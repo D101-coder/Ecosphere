@@ -8,11 +8,10 @@ Production ready full stack scaffold:
 - Docker Compose for local development
 
 ## Quick start (local)
-1. Copy `.env variable` to `backend/.env` and `frontend/.env`.
-2. Start MySQL and run:
+1. Using .env variables, start MySQL and run:
    docker-compose up --build
-3. Backend runs on http://localhost:4000
-4. Frontend runs on http://localhost:3000
+2. Backend runs on http://localhost:4000
+3. Frontend runs on http://localhost:3000
 
 ## Features
 - Signup / Login with JWT and refresh tokens
