@@ -18,3 +18,14 @@ export default function App() {
     </AuthProvider>
   );
 }
+import Profile from "./pages/dashboard/Profile";
+import Badges from "./pages/dashboard/Badges";
+import Rewards from "./pages/dashboard/Rewards";
+import ChallengeDetail from "./pages/dashboard/ChallengeDetail";
+
+// inside Routes in App component add:
+<Route path="/dashboard/profile" element={<Profile />} />
+<Route path="/dashboard/badges" element={<Badges />} />
+<Route path="/dashboard/rewards" element={<Rewards />} />
+<Route path="/dashboard/challenge/:id" element={<ChallengeDetail />} />
+
